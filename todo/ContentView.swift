@@ -24,6 +24,7 @@ struct ContentView: View {
                                 guard !self.todoItemName.isEmpty else {return}
                                 self.todoItems.append(TodoItem(name: self.todoItemName))
                                 self.todoItemName = ""
+                                self.save()
                         },
                            label: {
                                 Image(systemName:"text.badge.plus")
@@ -34,12 +35,12 @@ struct ContentView: View {
                 List{
                     ForEach(self.todoItems){ todoItem in
                         Text("\(todoItem.name)")
-                    }
+                    }.onDelete(perform: delete)
                 }
                 
             }
             .navigationTitle("Todo List")
-        }
+        }.onAppear(perform: load)
     }
     private func save(){
         UserDefaults.standard.set(
@@ -53,6 +54,10 @@ struct ContentView: View {
                 self.todoItems = todoItemsList
             }
         }
+    }
+    private func delete(at offset:IndexSet){
+        self.todoItems.remove(atOffsets: offset)
+        save()
     }
 }
 
